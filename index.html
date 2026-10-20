@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Math: Proof Mechanics & Mastery</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#035485',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .domino {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s;
+        }
+        .domino.fallen {
+            transform: rotate(75deg) translateY(12px) translateX(8px);
+        }
+        /* Ensure KaTeX inline equations display nicely without overflowing */
+        .katex-display {
+            margin: 0.5em 0 !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700/80 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="p-2 bg-brand-500/20 text-brand-400 rounded-lg border border-brand-500/30">
+                        <i class="fa-solid fa-square-root-variable text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight text-white block leading-tight">DiscreteMath<span class="text-brand-400">Pro</span></span>
+                        <span class="text-xs text-slate-400">Proof Mechanics & Interactive Lab</span>
+                    </div>
+                </div>
+
+                <!-- Global Stats & Navigation -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-700 text-xs">
+                        <div class="flex items-center space-x-1.5 text-amber-400" title="Completed Challenges">
+                            <i class="fa-solid fa-trophy"></i>
+                            <span id="completed-count">0/7 Proof Types Mastered</span>
+                        </div>
+                        <span class="text-slate-600">|</span>
+                        <div class="flex items-center space-x-1.5 text-emerald-400" title="XP Points">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span id="xp-counter">0 XP</span>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('practice')" class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-sm font-medium transition shadow-lg shadow-brand-600/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                        <span>Practice Center</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto px-2 sm:px-4 lg:px-8 py-6 gap-6">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="bg-slate-800/60 rounded-xl border border-slate-700/60 p-3 sticky top-20">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Proof Techniques</div>
+                <nav class="space-y-1" id="sidebar-nav">
+                    <!-- Nav items inserted dynamically -->
+                </nav>
+
+                <div class="mt-6 pt-4 border-t border-slate-700/60">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Hub</div>
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between transition text-slate-300 hover:bg-slate-700/50">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-compass text-slate-400"></i>
+                            <span>Overview & Map</span>
+                        </span>
+                    </button>
+                    <button onclick="switchTab('practice')" id="nav-practice" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between transition text-slate-300 hover:bg-slate-700/50 mt-1">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-graduation-cap text-slate-400"></i>
+                            <span>Comprehensive Quiz</span>
+                        </span>
+                        <span class="bg-brand-500/20 text-brand-300 text-xs px-2 py-0.5 rounded-full border border-brand-500/30">Test</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0">
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="space-y-6">
+                <!-- Welcome Hero -->
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-900 via-slate-800 to-slate-900 border border-slate-700 p-6 md:p-8">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="px-3 py-1 bg-brand-500/20 text-brand-300 text-xs rounded-full border border-brand-500/30 font-semibold tracking-wide uppercase">Discrete Mathematics 101</span>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 tracking-tight">Mastering Mathematical Proofs</h1>
+                        <p class="text-slate-300 mt-2 text-sm sm:text-base leading-relaxed">
+                            A mathematical proof is an inferential argument for a mathematical statement, showing that the stated assumptions logically guarantee the conclusion. Explore 7 essential proof strategies with blueprints, worked examples, and interactive labs.
+                        </p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button onclick="selectProofModule(0)" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-medium text-sm transition flex items-center space-x-2 shadow-lg shadow-brand-500/20">
+                                <span>Start Learning: Direct Proof</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proof Types Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="dashboard-grid">
+                    <!-- Cards rendered by JS -->
+                </div>
+            </div>
+
+            <!-- PROOF TYPE DETAIL VIEW -->
+            <div id="view-module" class="hidden space-y-6">
+                <!-- Header Banner -->
+                <div class="bg-slate-800/80 rounded-2xl border border-slate-700/80 p-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center space-x-3">
+                                <span id="module-badge" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30">Proof Strategy #1</span>
+                                <span id="module-status-badge" class="text-xs px-2.5 py-1 rounded-md bg-slate-700 text-slate-300">Unattempted Lab</span>
+                            </div>
+                            <h1 id="module-title" class="text-2xl sm:text-3xl font-bold text-white mt-2">Direct Proof</h1>
+                            <p id="module-subtitle" class="text-slate-400 text-sm mt-1">Assuming P is true to establish that Q must logically follow.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="prev-module-btn" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition"><i class="fa-solid fa-chevron-left"></i></button>
+                            <span class="text-xs text-slate-400 font-mono" id="module-index-indicator">1 / 7</span>
+                            <button id="next-module-btn" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Module Tab Navigation -->
+                    <div class="flex border-b border-slate-700 mt-6 space-x-6 text-sm">
+                        <button onclick="setModuleSubtab('concept')" id="subtab-concept" class="pb-3 font-medium text-brand-400 border-b-2 border-brand-400 flex items-center space-x-2">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>1. Logic & Blueprint</span>
+                        </button>
+                        <button onclick="setModuleSubtab('example')" id="subtab-example" class="pb-3 font-medium text-slate-400 border-b-2 border-transparent hover:text-slate-200 flex items-center space-x-2">
+                            <i class="fa-solid fa-magnifying-glass font-bold"></i>
+                            <span>2. Worked Example</span>
+                        </button>
+                        <button onclick="setModuleSubtab('lab')" id="subtab-lab" class="pb-3 font-medium text-slate-400 border-b-2 border-transparent hover:text-slate-200 flex items-center space-x-2">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>3. Interactive Lab</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 1: CONCEPT & BLUEPRINT -->
+                <div id="subtab-content-concept" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Formal Definition & Logic -->
+                        <div class="bg-slate-800/50 rounded-xl border border-slate-700/60 p-5 space-y-4">
+                            <div class="flex items-center space-x-2 text-brand-400 font-semibold">
+                                <i class="fa-solid fa-brain"></i>
+                                <span>Formal Definition & Formula</span>
+                            </div>
+                            <div id="module-formula-box" class="p-3 bg-slate-900/80 rounded-lg border border-slate-700/80 text-center font-mono text-brand-300 text-lg">
+                                <!-- Math rendered here -->
+                            </div>
+                            <p id="module-description" class="text-sm text-slate-300 leading-relaxed">
+                                Description text.
+                            </p>
+                            <div class="bg-amber-950/30 border border-amber-800/40 rounded-lg p-3 text-xs text-amber-300/90 flex space-x-2">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm mt-0.5"></i>
+                                <div>
+                                    <strong class="font-semibold block mb-0.5">Common Pitfall:</strong>
+                                    <span id="module-pitfall">Pitfall text</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Blueprint Template -->
+                        <div class="bg-slate-800/50 rounded-xl border border-slate-700/60 p-5 space-y-4">
+                            <div class="flex items-center space-x-2 text-emerald-400 font-semibold">
+                                <i class="fa-solid fa-cubes"></i>
+                                <span>Proof Strategy Blueprint</span>
+                            </div>
+                            <div class="text-xs text-slate-400">Standard structure required for writing formal proofs:</div>
+                            <div id="module-blueprint-container" class="space-y-2 text-xs font-mono">
+                                <!-- Step blueprint cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 2: WORKED EXAMPLE -->
+                <div id="subtab-content-example" class="hidden space-y-6">
+                    <div class="bg-slate-800/50 rounded-xl border border-slate-700/60 p-6 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2 text-brand-400 font-semibold">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span id="example-statement-title">Theorem Walkthrough</span>
+                            </div>
+                            <span class="text-xs text-slate-400">Click steps to reveal reasoning</span>
+                        </div>
+
+                        <div id="example-statement" class="p-4 bg-slate-900/90 rounded-xl border border-slate-700 text-base font-medium text-slate-200">
+                            <!-- Theorem statement -->
+                        </div>
+
+                        <!-- Interactive Step Walkthrough -->
+                        <div id="example-steps-list" class="space-y-3">
+                            <!-- Walkthrough steps dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 3: INTERACTIVE LAB / GAME -->
+                <div id="subtab-content-lab" class="hidden space-y-6">
+                    <div class="bg-slate-800/60 rounded-xl border border-slate-700/80 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                                    <i class="fa-solid fa-vial text-brand-400"></i>
+                                    <span id="lab-title">Interactive Challenge</span>
+                                </h3>
+                                <p id="lab-instructions" class="text-xs text-slate-400 mt-0.5">Solve the challenge below to test your understanding of this proof technique.</p>
+                            </div>
+                            <button onclick="resetCurrentLab()" class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-md text-slate-300 transition flex items-center space-x-1">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Reset Lab</span>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Lab Container -->
+                        <div id="lab-dynamic-container" class="min-h-[300px] bg-slate-900/80 rounded-xl border border-slate-700/80 p-5 relative flex flex-col justify-between">
+                            <!-- Game specific content injects here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRACTICE / QUIZ VIEW -->
+            <div id="view-practice" class="hidden space-y-6">
+                <div class="bg-slate-800/80 rounded-2xl border border-slate-700/80 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Proof Master Quiz & Practice</h1>
+                            <p class="text-slate-400 text-xs mt-1">Test your ability to identify, analyze, and apply all 7 proof techniques.</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block">Current Quiz Score</span>
+                            <span id="quiz-score-display" class="text-xl font-bold text-emerald-400">0 / 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="quiz-container" class="bg-slate-800/50 rounded-xl border border-slate-700/60 p-6 space-y-6">
+                    <!-- Dynamic quiz question -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-900/80 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>Discrete Mathematics Proof Mechanics Engine</span>
+            <span>Designed for 12th Grade & Higher Education Computer Science / Mathematics</span>
+        </div>
+    </footer>
+
+    <!-- JS LOGIC & DATA ENGINE -->
+    <script>
+        // --- KATEX SAFE RENDER HELPER ---
+        function renderMath(element = document.body) {
+            if (window.renderMathInElement) {
+                try {
+                    window.renderMathInElement(element, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                } catch(e) {
+                    console.error("KaTeX rendering error:", e);
+                }
+            }
+        }
+
+        // --- PROOF MODULE DATA ENGINE ---
+        const PROOF_MODULES = [
+            {
+                id: 'direct',
+                title: 'Direct Proof',
+                subtitle: 'Directly deducing Q assuming P holds true.',
+                badge: 'Strategy 1',
+                formula: 'P \\implies Q',
+                description: 'A direct proof establishes a conditional statement $P \\implies Q$ by assuming that the hypothesis $P$ is true, and using logical axioms, definitions, and previously established theorems to directly deduce that the conclusion $Q$ must also be true.',
+                pitfall: 'Assuming the conclusion $Q$ is true from the start (begging the question) or using unverified specific examples as general proof.',
+                blueprint: [
+                    { step: '1. Assumption', code: 'Suppose P is true.', desc: 'State the premise clearly.' },
+                    { step: '2. Definition Unpacking', code: 'By definition of P...', desc: 'Expand mathematical definitions (e.g., $n=2k$).' },
+                    { step: '3. Algebraic / Logical Chain', code: 'Then... = ... = ...', desc: 'Perform valid operations to reach form of Q.' },
+                    { step: '4. Conclusion', code: 'Therefore, Q is true. $\\blacksquare$', desc: 'State that the implication holds.' }
+                ],
+                example: {
+                    title: 'Theorem: The sum of two even integers is always even.',
+                    statement: '$$\\forall a, b \\in \\mathbb{Z}, \\text{if } a \\text{ and } b \\text{ are even, then } a+b \\text{ is even.}$$',
+                    steps: [
+                        { label: 'Step 1: Assumption', detail: 'Suppose $a$ and $b$ are arbitrary even integers.', note: 'Hypothesis $P$' },
+                        { label: 'Step 2: Apply Definition', detail: 'By definition of even, there exist integers $k, m \\in \\mathbb{Z}$ such that $a = 2k$ and $b = 2m$.', note: 'Expansion' },
+                        { label: 'Step 3: Perform Addition', detail: 'Then $a + b = 2k + 2m = 2(k + m)$.', note: 'Algebraic manipulation' },
+                        { label: 'Step 4: Conclude', detail: 'Since $k, m \\in \\mathbb{Z}$, $k+m$ is an integer. Thus $a+b$ is $2 \\times (\\text{integer})$, which is even. $\\blacksquare$', note: 'Conclusion $Q$' }
+                    ]
+                },
+                labType: 'direct_sequencer'
+            },
+            {
+                id: 'counterexample',
+                title: 'Disproof by Counterexample',
+                subtitle: 'Invalidating a universal claim with a single counterexample.',
+                badge: 'Strategy 2',
+                formula: '\\neg (\\forall x, P(x)) \\equiv \\exists x, \\neg P(x)',
+                description: 'To disprove a universal statement of the form "For all $x$, $P(x)$ holds", you only need to produce a single specific instance in the domain where $P(x)$ is FALSE. This single instance is called a counterexample.',
+                pitfall: 'Trying to prove a universal statement is false by offering a vague statement rather than evaluating a specific concrete value.',
+                blueprint: [
+                    { step: '1. Identify Claim', code: 'Claim: $\\forall x \\in D, P(x)$', desc: 'Identify universal statement.' },
+                    { step: '2. Select Candidate', code: 'Consider $x = c \\in D$.', desc: 'Pick a specific boundary/special element.' },
+                    { step: '3. Evaluate $P(c)$', code: 'For $x = c$, $P(c)$ evaluates to FALSE.', desc: 'Show explicit arithmetic failure.' },
+                    { step: '4. Disproof Conclusion', code: 'Thus $x=c$ is a counterexample; claim is FALSE.', desc: 'Conclude disproof.' }
+                ],
+                example: {
+                    title: 'Disprove Claim: For all real numbers $x$, $x^2 > x$.',
+                    statement: '$$\\text{Claim: } \\forall x \\in \\mathbb{R}, x^2 > x$$',
+                    steps: [
+                        { label: 'Step 1: Identify Goal', detail: 'Find a real number $x$ where $x^2 \\le x$.', note: 'Negation logic' },
+                        { label: 'Step 2: Propose Counterexample', detail: 'Let $x = 0.5 = \\frac{1}{2} \\in \\mathbb{R}$.', note: 'Candidate selection' },
+                        { label: 'Step 3: Test Inequality', detail: '$x^2 = (0.5)^2 = 0.25$. Notice $0.25 \\le 0.5$, so $x^2 > x$ is FALSE.', note: 'Evaluation' },
+                        { label: 'Step 4: Conclude', detail: 'Since $x = 0.5$ fails the statement, the universal claim is disproved.', note: 'Q.E.D.' }
+                    ]
+                },
+                labType: 'counterexample_hunter'
+            },
+            {
+                id: 'contradiction',
+                title: 'Proof by Contradiction',
+                subtitle: 'Assuming the negation and deriving a logical impossibility.',
+                badge: 'Strategy 3',
+                formula: '(\\neg P \\implies (R \\land \\neg R)) \\implies P',
+                description: 'Proof by Contradiction (Reductio ad Absurdum) assumes the statement $P$ you want to prove is actually FALSE ($\ meq P$). Through valid logical steps, you derive an impossible contradiction (like $0 = 1$ or a number being both even and odd). Hence, $\\neg P$ must be impossible, meaning $P$ must be TRUE.',
+                pitfall: 'Forgetting what statement was originally assumed, or making an algebraic error and mistaking it for a logical contradiction.',
+                blueprint: [
+                    { step: '1. Assume Negation', code: 'Suppose toward contradiction that P is FALSE.', desc: 'Assume $\\neg P$.' },
+                    { step: '2. Deductive Steps', code: 'Then... [derive consequences]', desc: 'Unroll logical ramifications.' },
+                    { step: '3. Reach Impossibility', code: 'This implies $1 = 0$ (or $x$ is even & odd).', desc: 'Flag the contradiction.' },
+                    { step: '4. Conclude Original', code: 'Contradiction! Hence P must be TRUE. $\\blacksquare$', desc: 'Finalize proof.' }
+                ],
+                example: {
+                    title: 'Theorem: $\\sqrt{2}$ is irrational.',
+                    statement: '$$\\sqrt{2} \\notin \\mathbb{Q}$$',
+                    steps: [
+                        { label: 'Step 1: Negate', detail: 'Suppose toward contradiction that $\\sqrt{2}$ IS rational.', note: 'Assumption $\\neg P$' },
+                        { label: 'Step 2: Express Reduced Fraction', detail: 'Then $\\sqrt{2} = \\frac{a}{b}$ where $a, b \\in \\mathbb{Z}, b \\neq 0$, and $\\gcd(a,b)=1$ (fully reduced).', note: 'Definition' },
+                        { label: 'Step 3: Square and Simplify', detail: '$2 = \\frac{a^2}{b^2} \\implies a^2 = 2b^2$, so $a^2$ is even $\\implies a$ is even ($a=2k$).', note: 'Deduction 1' },
+                        { label: 'Step 4: Substitute & Find Conflict', detail: '$(2k)^2 = 2b^2 \\implies 4k^2 = 2b^2 \\implies b^2 = 2k^2$, so $b$ is also even.', note: 'Deduction 2' },
+                        { label: 'Step 5: Contradiction!', detail: 'Both $a$ and $b$ are even, contradicting $\\gcd(a,b)=1$. Thus $\\sqrt{2}$ is irrational. $\\blacksquare$', note: 'Impossibility' }
+                    ]
+                },
+                labType: 'contradiction_detective'
+            },
+            {
+                id: 'contrapositive',
+                title: 'Proof by Contrapositive',
+                subtitle: 'Proving "If NOT Q, then NOT P" which is logically equivalent.',
+                badge: 'Strategy 4',
+                formula: 'P \\implies Q \\;\\equiv\\; \\neg Q \\implies \\neg P',
+                description: 'A conditional statement $P \\implies Q$ is logically equivalent to its contrapositive $\\neg Q \\implies \\neg P$. Instead of proving $P \\implies Q$ directly, we assume $\\neg Q$ (the negation of the conclusion) and prove directly that $\\neg P$ (the negation of the hypothesis) follows.',
+                pitfall: 'Confusing the Contrapositive ($\\neg Q \\implies \\neg P$) with the Converse ($Q \\implies P$) or Inverse ($\\neg P \\implies \\neg Q$).',
+                blueprint: [
+                    { step: '1. State Contrapositive', code: 'We prove the contrapositive: $\\neg Q \\implies \\neg P$.', desc: 'Reformulate implication.' },
+                    { step: '2. Assume $\\neg Q$', code: 'Suppose $\\neg Q$ is true.', desc: 'Assume negation of conclusion.' },
+                    { step: '3. Direct Proof Steps', code: 'Apply definitions and algebra...', desc: 'Work directly to $\\neg P$.' },
+                    { step: '4. Conclude $\\neg P$', code: 'Therefore $\\neg P$ holds. Hence $P \\implies Q$. $\\blacksquare$', desc: 'Reiterate equivalence.' }
+                ],
+                example: {
+                    title: 'Theorem: For $n \\in \\mathbb{Z}$, if $3n+2$ is odd, then $n$ is odd.',
+                    statement: '$$P: 3n+2 \\text{ is odd} \\implies Q: n \\text{ is odd}$$',
+                    steps: [
+                        { label: 'Step 1: Form Contrapositive', detail: 'We prove: If $n$ is NOT odd ($n$ is even), then $3n+2$ is NOT odd ($3n+2$ is even).', note: '$\\neg Q \\implies \\neg P$' },
+                        { label: 'Step 2: Assume $\\neg Q$', detail: 'Suppose $n$ is even. Then $n = 2k$ for some $k \\in \\mathbb{Z}$.', note: 'Assumption' },
+                        { label: 'Step 3: Evaluate $3n+2$', detail: '$3n+2 = 3(2k) + 2 = 6k + 2 = 2(3k + 1)$.', note: 'Algebra' },
+                        { label: 'Step 4: Conclude $\\neg P$', detail: 'Since $3k+1 \\in \\mathbb{Z}$, $3n+2$ is divisible by 2 (even). By contrapositive, theorem is proved. $\\blacksquare$', note: 'Equivalent Proof' }
+                    ]
+                },
+                labType: 'contrapositive_builder'
+            },
+            {
+                id: 'cases',
+                title: 'Proof by Cases',
+                subtitle: 'Partitioning the domain into exhaustive non-overlapping scenarios.',
+                badge: 'Strategy 5',
+                formula: '(P_1 \\lor P_2 \\lor \\dots \\lor P_n) \\implies Q',
+                description: 'When a claim applies to a domain that can be divided into a finite set of exhaustive cases (e.g., numbers are either positive, negative, or zero; integers are even or odd), you can prove $Q$ separately for each case.',
+                pitfall: 'Failing to cover all possible cases (leaving gaps in domain coverage).',
+                blueprint: [
+                    { step: '1. Partition Domain', code: 'Domain split into Case 1, Case 2...', desc: 'Ensure cases cover all possibilities.' },
+                    { step: '2. Prove Case 1', code: 'Case 1 ($P_1$): ... $\\implies Q$', desc: 'Validate conclusion under Case 1.' },
+                    { step: '3. Prove Remaining Cases', code: 'Case 2 ($P_2$): ... $\\implies Q$', desc: 'Validate conclusion under Case 2...n.' },
+                    { step: '4. Overall Conclusion', code: 'Since Q holds in all cases, Q is true. $\\blacksquare$', desc: 'Synthesize overall result.' }
+                ],
+                example: {
+                    title: 'Theorem: For any integer $n$, $n^2 + n$ is even.',
+                    statement: '$$\\forall n \\in \\mathbb{Z}, n^2 + n \\text{ is even}$$',
+                    steps: [
+                        { label: 'Step 1: Exhaustive Split', detail: 'Any integer $n$ is either Case 1: Even, or Case 2: Odd.', note: 'Domain Partition' },
+                        { label: 'Step 2: Case 1 (n is Even)', detail: 'If $n = 2k$, then $n^2 + n = (2k)^2 + 2k = 4k^2 + 2k = 2(2k^2 + k)$, which is even.', note: 'Case 1 Verified' },
+                        { label: 'Step 3: Case 2 (n is Odd)', detail: 'If $n = 2k+1$, then $n^2 + n = (2k+1)^2 + (2k+1) = 4k^2 + 6k + 2 = 2(2k^2 + 3k + 1)$, which is even.', note: 'Case 2 Verified' },
+                        { label: 'Step 4: Conclude', detail: 'In both cases $n^2+n$ is even. Thus it holds for all integers. $\\blacksquare$', note: 'Exhaustive proof' }
+                    ]
+                },
+                labType: 'cases_matcher'
+            },
+            {
+                id: 'induction',
+                title: 'Proof by Mathematical Induction',
+                subtitle: 'Base Case + Inductive Step to prove statements for $\\mathbb{N}$.',
+                badge: 'Strategy 6',
+                formula: '[P(1) \\land \\forall k(P(k) \\implies P(k+1))] \\implies \\forall n \\ge 1, P(n)',
+                description: 'Used to prove statements indexed by natural numbers $n \\ge b$. Like falling dominoes: 1) Prove the Base Case $P(1)$ is true. 2) Prove that IF $P(k)$ is true (Inductive Hypothesis), THEN $P(k+1)$ MUST also be true.',
+                pitfall: 'Assuming $P(k+1)$ instead of proving it, or skipping the base case completely.',
+                blueprint: [
+                    { step: '1. Base Case', code: 'Show $P(1)$ is true.', desc: 'Verify for smallest integer $n=1$.' },
+                    { step: '2. Inductive Hypothesis', code: 'Assume $P(k)$ holds for $k \\ge 1$.', desc: 'Assume statement for step $k$.' },
+                    { step: '3. Inductive Step', code: 'Show $P(k+1)$ follows from $P(k)$.', desc: 'Algebraically prove step $k+1$.' },
+                    { step: '4. Conclusion', code: 'By induction, $P(n)$ holds $\\forall n \\in \\mathbb{N}$. $\\blacksquare$', desc: 'Domino principle complete.' }
+                ],
+                example: {
+                    title: 'Theorem: $1 + 2 + 3 + \\dots + n = \\frac{n(n+1)}{2}$ for $n \\ge 1$.',
+                    statement: '$$P(n): \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$',
+                    steps: [
+                        { label: 'Step 1: Base Case n=1', detail: 'LHS $= 1$. RHS $= \\frac{1(1+1)}{2} = 1$. LHS = RHS. $P(1)$ holds!', note: 'Base Case' },
+                        { label: 'Step 2: Inductive Hypothesis', detail: 'Assume $P(k)$ is true for $k \\ge 1$: $1 + 2 + \\dots + k = \\frac{k(k+1)}{2}$.', note: 'Assumption' },
+                        { label: 'Step 3: Inductive Step for k+1', detail: 'Show $1 + \\dots + k + (k+1) = \\frac{(k+1)(k+2)}{2}$. LHS $= \\left[\\frac{k(k+1)}{2}\\right] + (k+1) = (k+1)\\left[\\frac{k}{2} + 1\\right] = \\frac{(k+1)(k+2)}{2}$.', note: 'Algebraic Bridge' },
+                        { label: 'Step 4: Conclude', detail: 'By Mathematical Induction, $P(n)$ holds for all $n \\ge 1$. $\\blacksquare$', note: 'Proven' }
+                    ]
+                },
+                labType: 'induction_domino'
+            },
+            {
+                id: 'strong_induction',
+                title: 'Strong Mathematical Induction',
+                subtitle: 'Assuming truth for ALL prior steps $P(1), \\dots, P(k)$ to prove $P(k+1)$.',
+                badge: 'Strategy 7',
+                formula: '[P(1) \\land \\dots \\land P(k) \\implies P(k+1)] \\implies \\forall n, P(n)',
+                description: 'Strong Induction differs from standard induction by strengthening the Inductive Hypothesis: instead of assuming ONLY $P(k)$ is true, you assume $P(i)$ is true for ALL previous values $1 \\le i \\le k$ to prove $P(k+1)$. Essential when step $k+1$ depends on elements smaller than just $k$.',
+                pitfall: 'Not establishing enough base cases when the inductive step steps back multiple steps (e.g., referencing $P(k-2)$ requires multiple base cases).',
+                blueprint: [
+                    { step: '1. Multi-Base Cases', code: 'Verify $P(1), P(2), \\dots, P(b)$.', desc: 'Check initial required values.' },
+                    { step: '2. Strong Hypothesis', code: 'Assume $P(i)$ is true for all $1 \\le i \\le k$.', desc: 'Assume complete history.' },
+                    { step: '3. Inductive Step', code: 'Prove $P(k+1)$ using any $P(i)$.', desc: 'Build bridge from prior states.' },
+                    { step: '4. Conclusion', code: 'By Strong Induction, $P(n)$ holds $\\forall n$. $\\blacksquare$', desc: 'Full domain proven.' }
+                ],
+                example: {
+                    title: 'Theorem: Every integer $n \\ge 2$ can be factored into a product of primes.',
+                    statement: '$$\\forall n \\ge 2, n \\text{ is prime or a product of primes.}$$',
+                    steps: [
+                        { label: 'Step 1: Base Case n=2', detail: '$n=2$ is prime itself. Base case holds.', note: 'Base Case' },
+                        { label: 'Step 2: Strong Hypothesis', detail: 'Assume every integer $i$ with $2 \\le i \\le k$ can be written as a product of primes.', note: 'Strong Assumption' },
+                        { label: 'Step 3: Inductive Step (k+1)', detail: 'Consider $k+1$. If $k+1$ is prime, we are done. If composite, $k+1 = a \\cdot b$ where $2 \\le a, b < k+1$. By strong hypothesis, $a$ and $b$ are products of primes. Thus $a \\cdot b$ is a product of primes!', note: 'Breakdown' },
+                        { label: 'Step 4: Conclude', detail: 'By strong mathematical induction, statement holds for all $n \\ge 2$. $\\blacksquare$', note: 'Proven' }
+                    ]
+                },
+                labType: 'strong_induction_bridge'
+            }
+        ];
+
+        // --- QUIZ DATA ---
+        const QUIZ_QUESTIONS = [
+            {
+                question: "Which proof method assumes $P$ is true and directly works towards $Q$?",
+                options: ["Proof by Contradiction", "Direct Proof", "Proof by Contrapositive", "Strong Induction"],
+                answer: 1,
+                explanation: "Direct proof assumes premise $P$ and uses rules of inference to show $Q$ logically follows."
+            },
+            {
+                question: "To disprove the claim 'All prime numbers are odd', what single value serves as a counterexample?",
+                options: ["1", "2", "3", "9"],
+                answer: 1,
+                explanation: "2 is a prime number and it is even, directly disproving the universal claim $\\forall x, P(x)$."
+            },
+            {
+                question: "What is the logical equivalent of $P \\implies Q$ used in Proof by Contrapositive?",
+                options: ["$Q \\implies P$", "$\\neg P \\implies \\neg Q$", "$\\neg Q \\implies \\neg P$", "$P \\land \\neg Q$"],
+                answer: 2,
+                explanation: "Contrapositive swaps and negates both hypothesis and conclusion: $\\neg Q \\implies \\neg P$."
+            },
+            {
+                question: "In Proof by Contradiction of $P$, what do you initially assume?",
+                options: ["Assume $P$ is true", "Assume $P$ is false ($\\neg P$)", "Assume $Q$ is true", "Assume $P \\iff Q$"],
+                answer: 1,
+                explanation: "Proof by contradiction starts by assuming the negation of what you wish to prove."
+            },
+            {
+                question: "When proving $P(n)$ for all $n \\in \\mathbb{N}$ via Mathematical Induction, what is the Inductive Step?",
+                options: ["Show $P(1)$ is true", "Show $P(k)$ is true", "Show $P(k) \\implies P(k+1)$", "Assume $P(k+1)$ is true"],
+                answer: 2,
+                explanation: "The inductive step proves that IF the $k$-th case holds, THEN the $(k+1)$-th case must also hold."
+            }
+        ];
+
+        // --- GLOBAL STATE ---
+        let currentState = {
+            currentTab: 'dashboard', // dashboard, module, practice
+            currentModuleIndex: 0,
+            currentSubtab: 'concept', // concept, example, lab
+            userXP: 0,
+            completedModules: new Set(),
+            quizCurrentIndex: 0,
+            quizScore: 0,
+            labState: {}
+        };
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSidebarNav();
+            renderDashboardGrid();
+            updateUIStats();
+            // Initial Math render
+            setTimeout(() => renderMath(), 100);
+        });
+
+        // Navigation Switcher
+        function switchTab(tab) {
+            currentState.currentTab = tab;
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-module').classList.add('hidden');
+            document.getElementById('view-practice').classList.add('hidden');
+
+            document.getElementById('nav-dashboard').classList.remove('bg-brand-500/10', 'text-brand-400');
+            document.getElementById('nav-practice').classList.remove('bg-brand-500/10', 'text-brand-400');
+
+            if (tab === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('nav-dashboard').classList.add('bg-brand-500/10', 'text-brand-400');
+            } else if (tab === 'practice') {
+                document.getElementById('view-practice').classList.remove('hidden');
+                document.getElementById('nav-practice').classList.add('bg-brand-500/10', 'text-brand-400');
+                startQuiz();
+            } else if (tab === 'module') {
+                document.getElementById('view-module').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => renderMath(), 50);
+        }
+
+        function renderSidebarNav() {
+            const nav = document.getElementById('sidebar-nav');
+            nav.innerHTML = PROOF_MODULES.map((m, idx) => `
+                <button onclick="selectProofModule(${idx})" id="sidebar-mod-${idx}" class="w-full text-left px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center justify-between transition text-slate-300 hover:bg-slate-700/50">
+                    <span class="truncate pr-2">${idx + 1}. ${m.title}</span>
+                    <span id="badge-status-${idx}">
+                        ${currentState.completedModules.has(m.id) ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>' : '<i class="fa-regular fa-circle text-slate-500"></i>'}
+                    </span>
+                </button>
+            `).join('');
+        }
+
+        function renderDashboardGrid() {
+            const grid = document.getElementById('dashboard-grid');
+            grid.innerHTML = PROOF_MODULES.map((m, idx) => `
+                <div class="bg-slate-800/60 rounded-xl border border-slate-700/70 p-5 flex flex-col justify-between hover:border-slate-500 transition group">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30">${m.badge}</span>
+                            ${currentState.completedModules.has(m.id) ? '<span class="text-xs text-emerald-400 flex items-center space-x-1"><i class="fa-solid fa-check"></i> <span>Completed</span></span>' : '<span class="text-xs text-slate-500">Not Completed</span>'}
+                        </div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition">${m.title}</h3>
+                        <p class="text-xs text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">${m.subtitle}</p>
+                    </div>
+                    <div class="mt-5 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+                        <span class="text-xs font-mono text-slate-400">Lab: ${m.labType.replace(/_/g, ' ')}</span>
+                        <button onclick="selectProofModule(${idx})" class="px-3 py-1.5 bg-slate-700 hover:bg-brand-600 text-white text-xs font-medium rounded-lg transition flex items-center space-x-1">
+                            <span>Explore</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectProofModule(index) {
+            currentState.currentModuleIndex = index;
+            const m = PROOF_MODULES[index];
+
+            // Highlight sidebar
+            PROOF_MODULES.forEach((_, idx) => {
+                const el = document.getElementById(`sidebar-mod-${idx}`);
+                if (el) el.classList.remove('bg-brand-500/20', 'text-brand-300', 'border', 'border-brand-500/30');
+            });
+            const activeEl = document.getElementById(`sidebar-mod-${index}`);
+            if (activeEl) activeEl.classList.add('bg-brand-500/20', 'text-brand-300', 'border', 'border-brand-500/30');
+
+            // Populate Module View Data
+            document.getElementById('module-badge').innerText = m.badge;
+            document.getElementById('module-title').innerText = m.title;
+            document.getElementById('module-subtitle').innerText = m.subtitle;
+            document.getElementById('module-index-indicator').innerText = `${index + 1} / ${PROOF_MODULES.length}`;
+            
+            // Formula & Description
+            document.getElementById('module-formula-box').innerHTML = `$$${m.formula}$$`;
+            document.getElementById('module-description').innerHTML = m.description;
+            document.getElementById('module-pitfall').innerHTML = m.pitfall;
+
+            // Blueprint
+            document.getElementById('module-blueprint-container').innerHTML = m.blueprint.map(bp => `
+                <div class="p-2.5 rounded bg-slate-900/60 border border-slate-700/70">
+                    <div class="text-brand-400 font-bold text-xs">${bp.step}</div>
+                    <div class="text-slate-200 text-xs font-mono my-0.5">${bp.code}</div>
+                    <div class="text-slate-400 text-[11px]">${bp.desc}</div>
+                </div>
+            `).join('');
+
+            // Example Walkthrough
+            document.getElementById('example-statement-title').innerText = m.example.title;
+            document.getElementById('example-statement').innerHTML = m.example.statement;
+            document.getElementById('example-steps-list').innerHTML = m.example.steps.map((st, i) => `
+                <div class="p-3 bg-slate-900/50 rounded-lg border border-slate-700/60 transition hover:border-slate-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-brand-400">${st.label}</span>
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">${st.note}</span>
+                    </div>
+                    <div class="text-sm text-slate-200 mt-1">${st.detail}</div>
+                </div>
+            `).join('');
+
+            // Setup Navigation Buttons
+            document.getElementById('prev-module-btn').onclick = () => selectProofModule((index - 1 + PROOF_MODULES.length) % PROOF_MODULES.length);
+            document.getElementById('next-module-btn').onclick = () => selectProofModule((index + 1) % PROOF_MODULES.length);
+
+            // Reset Subtab
+            setModuleSubtab('concept');
+            switchTab('module');
+        }
+
+        function setModuleSubtab(subtab) {
+            currentState.currentSubtab = subtab;
+            ['concept', 'example', 'lab'].forEach(t => {
+                document.getElementById(`subtab-content-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`subtab-${t}`);
+                btn.classList.remove('text-brand-400', 'border-brand-400');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById(`subtab-content-${subtab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`subtab-${subtab}`);
+            activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            activeBtn.classList.add('text-brand-400', 'border-brand-400');
+
+            if (subtab === 'lab') {
+                initCurrentLab();
+            }
+            setTimeout(() => renderMath(), 50);
+        }
+
+        // --- INTERACTIVE LAB ENGINES ---
+        function initCurrentLab() {
+            const m = PROOF_MODULES[currentState.currentModuleIndex];
+            const container = document.getElementById('lab-dynamic-container');
+            document.getElementById('lab-title').innerText = `${m.title}: Interactive Lab`;
+
+            switch(m.labType) {
+                case 'direct_sequencer':
+                    initDirectSequencerLab(container);
+                    break;
+                case 'counterexample_hunter':
+                    initCounterexampleLab(container);
+                    break;
+                case 'contradiction_detective':
+                    initContradictionLab(container);
+                    break;
+                case 'contrapositive_builder':
+                    initContrapositiveLab(container);
+                    break;
+                case 'cases_matcher':
+                    initCasesLab(container);
+                    break;
+                case 'induction_domino':
+                    initInductionLab(container);
+                    break;
+                case 'strong_induction_bridge':
+                    initStrongInductionLab(container);
+                    break;
+            }
+            setTimeout(() => renderMath(container), 50);
+        }
+
+        function resetCurrentLab() {
+            initCurrentLab();
+        }
+
+        function awardXP(points, moduleId) {
+            if (!currentState.completedModules.has(moduleId)) {
+                currentState.completedModules.add(moduleId);
+                currentState.userXP += points;
+                updateUIStats();
+                renderSidebarNav();
+                renderDashboardGrid();
+            }
+        }
+
+        function updateUIStats() {
+            document.getElementById('completed-count').innerText = `${currentState.completedModules.size}/7 Mastered`;
+            document.getElementById('xp-counter').innerText = `${currentState.userXP} XP`;
+        }
+
+        // --- LAB 1: DIRECT PROOF SEQUENCER ---
+        function initDirectSequencerLab(container) {
+            const steps = [
+                { id: 1, text: "Suppose $n$ is an even integer." },
+                { id: 2, text: "By definition, $n = 2k$ for some $k \\in \\mathbb{Z}$." },
+                { id: 3, text: "Calculate $n^2 = (2k)^2 = 4k^2 = 2(2k^2)$." },
+                { id: 4, text: "Since $2k^2 \\in \\mathbb{Z}$, $n^2$ is divisible by 2 and thus even. $\\blacksquare$" }
+            ];
+            
+            let shuffled = [...steps].sort(() => Math.random() - 0.5);
+            currentState.labState = { selectedOrder: [], target: steps };
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Arrange the proof statements in correct logical sequence to prove: <strong>"If $n$ is even, then $n^2$ is even."</strong></p>
+                    <div class="grid grid-cols-1 gap-2" id="sequencer-pool">
+                        ${shuffled.map(s => `
+                            <button onclick="handleSequencerClick(${s.id})" id="seq-btn-${s.id}" class="p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-lg text-left text-xs font-mono text-slate-200 transition">
+                                ${s.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="seq-feedback" class="mt-3 text-xs"></div>
+                </div>
+            `;
+        }
+
+        function handleSequencerClick(id) {
+            const btn = document.getElementById(`seq-btn-${id}`);
+            if (btn.classList.contains('border-brand-500')) return;
+
+            currentState.labState.selectedOrder.push(id);
+            btn.classList.add('border-brand-500', 'bg-brand-500/10', 'text-brand-300');
+            btn.innerHTML = `<span class="inline-block w-5 h-5 bg-brand-500 text-white rounded-full text-center text-[10px] leading-5 mr-2">${currentState.labState.selectedOrder.length}</span>` + btn.innerHTML;
+
+            if (currentState.labState.selectedOrder.length === 4) {
+                const correct = currentState.labState.selectedOrder.every((val, idx) => val === idx + 1);
+                const fb = document.getElementById('seq-feedback');
+                if (correct) {
+                    fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg flex items-center space-x-2"><i class="fa-solid fa-circle-check text-base"></i><span>Perfect Logic! Sequence is correct. (+50 XP)</span></div>`;
+                    awardXP(50, 'direct');
+                } else {
+                    fb.innerHTML = `<div class="p-3 bg-rose-950/40 border border-rose-500/40 text-rose-300 rounded-lg flex items-center space-x-2"><i class="fa-solid fa-circle-xmark text-base"></i><span>Incorrect order. Click 'Reset Lab' to try again.</span></div>`;
+                }
+            }
+            renderMath(btn);
+        }
+
+        // --- LAB 2: COUNTEREXAMPLE HUNTER ---
+        function initCounterexampleLab(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Test numbers against the claim: <strong>"For all integers $n$, $n^2 + n + 11$ is a prime number."</strong> Find a counterexample!</p>
+                    <div class="flex items-center space-x-3">
+                        <input type="number" id="ce-input" placeholder="Enter integer n..." class="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-brand-500 w-44">
+                        <button onclick="testCounterexample()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-medium transition">Test Value</button>
+                    </div>
+                    <div id="ce-result" class="mt-3"></div>
+                </div>
+            `;
+        }
+
+        function testCounterexample() {
+            const val = parseInt(document.getElementById('ce-input').value);
+            const resDiv = document.getElementById('ce-result');
+            if (isNaN(val)) return;
+
+            const formulaVal = val * val + val + 11;
+            
+            let isPrime = true;
+            if (formulaVal < 2) isPrime = false;
+            for (let i = 2; i <= Math.sqrt(formulaVal); i++) {
+                if (formulaVal % i === 0) { isPrime = false; break; }
+            }
+
+            if (!isPrime) {
+                resDiv.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg space-y-1">
+                    <div class="font-bold text-sm flex items-center space-x-2"><i class="fa-solid fa-bullseye"></i><span>Counterexample Found!</span></div>
+                    <div class="text-xs font-mono">For $n = ${val}$, $n^2 + n + 11 = ${formulaVal}$, which is COMPOSITE! (e.g. $11 \\times 11 = 121$ when $n=10$ or $11$). Claim is Disproved! (+50 XP)</div>
+                </div>`;
+                awardXP(50, 'counterexample');
+            } else {
+                resDiv.innerHTML = `<div class="p-3 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-xs font-mono">
+                    For $n = ${val}$, $n^2 + n + 11 = ${formulaVal}$, which IS prime. Keep hunting!
+                </div>`;
+            }
+            renderMath(resDiv);
+        }
+
+        // --- LAB 3: CONTRADICTION DETECTIVE ---
+        function initContradictionLab(container) {
+            const steps = [
+                { line: 1, text: "1. Assume toward contradiction that $\\log_2 3$ is rational.", flawed: false },
+                { line: 2, text: "2. Then $\\log_2 3 = \\frac{a}{b}$ for positive integers $a, b > 0$.", flawed: false },
+                { line: 3, text: "3. By exponentiation: $2^{a/b} = 3 \\implies 2^a = 3^b$.", flawed: false },
+                { line: 4, text: "4. Notice $2^a$ is ALWAYS EVEN (since $a>0$), while $3^b$ is ALWAYS ODD (since $b>0$).", flawed: false },
+                { line: 5, text: "5. Since an even number can NEVER equal an odd number, this is an IMPOSSIBILITY ($2^a = 3^b$).", flawed: true }
+            ];
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Identify the step where the critical logical contradiction ($Even = Odd$) manifests!</p>
+                    <div class="space-y-2">
+                        ${steps.map(s => `
+                            <button onclick="checkContradictionStep(${s.flawed})" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 transition">
+                                ${s.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="contradiction-fb" class="mt-3"></div>
+                </div>
+            `;
+        }
+
+        function checkContradictionStep(isFlawed) {
+            const fb = document.getElementById('contradiction-fb');
+            if (isFlawed) {
+                fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                    <span>Correct Detective Work! Step 5 flags the impossible contradiction ($Even = Odd$), proving $\\log_2 3$ MUST be irrational. (+50 XP)</span>
+                </div>`;
+                awardXP(50, 'contradiction');
+            } else {
+                fb.innerHTML = `<div class="p-3 bg-rose-950/40 border border-rose-500/40 text-rose-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-xmark text-base"></i>
+                    <span>That step is valid logic. Look for the line where the contradiction between Even and Odd occurs!</span>
+                </div>`;
+            }
+            renderMath(fb);
+        }
+
+        // --- LAB 4: CONTRAPOSITIVE BUILDER ---
+        function initContrapositiveLab(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Original Statement: <strong>"If $5n + 3$ is even, then $n$ is odd."</strong></p>
+                    <p class="text-xs text-brand-300 font-semibold">Select the exact Contrapositive statement ($\ meq Q \\implies \\neg P$):</p>
+                    <div class="space-y-2">
+                        <button onclick="verifyContrapositive(false)" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-200">A. If $n$ is odd, then $5n+3$ is even. (Converse)</button>
+                        <button onclick="verifyContrapositive(true)" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-200">B. If $n$ is EVEN, then $5n+3$ is ODD. (Contrapositive)</button>
+                        <button onclick="verifyContrapositive(false)" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-200">C. If $5n+3$ is odd, then $n$ is even. (Inverse)</button>
+                    </div>
+                    <div id="contra-fb"></div>
+                </div>
+            `;
+        }
+
+        function verifyContrapositive(isCorrect) {
+            const fb = document.getElementById('contra-fb');
+            if (isCorrect) {
+                fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                    <span>Spot on! Negating both parts and swapping order yields: "If $n$ is even ($\\neg Q$), then $5n+3$ is odd ($\\neg P$)". (+50 XP)</span>
+                </div>`;
+                awardXP(50, 'contrapositive');
+            } else {
+                fb.innerHTML = `<div class="p-3 bg-rose-950/40 border border-rose-500/40 text-rose-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-xmark text-base"></i>
+                    <span>Remember: Contrapositive requires SWAPPING and NEGATING both clauses!</span>
+                </div>`;
+            }
+            renderMath(fb);
+        }
+
+        // --- LAB 5: CASES MATCHER ---
+        function initCasesLab(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">To prove $n(n+1)(n+2)$ is divisible by 3 for all integers $n$, partition $n$ into exhaustive remainder cases modulo 3:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs space-y-2">
+                            <span class="font-bold text-brand-400">Case 1: $n = 3k$</span>
+                            <p class="text-slate-300 font-mono">$n$ is divisible by 3 directly!</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] rounded">Verified</span>
+                        </div>
+                        <div class="p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs space-y-2">
+                            <span class="font-bold text-brand-400">Case 2: $n = 3k+1$</span>
+                            <p class="text-slate-300 font-mono">Which term is divisible by 3?</p>
+                            <button onclick="checkCaseMatch('n+2')" class="w-full py-1 bg-brand-600 hover:bg-brand-500 text-white rounded text-[10px]">Select $(n+2)$</button>
+                        </div>
+                        <div class="p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs space-y-2">
+                            <span class="font-bold text-brand-400">Case 3: $n = 3k+2$</span>
+                            <p class="text-slate-300 font-mono">Which term is divisible by 3?</p>
+                            <button onclick="checkCaseMatch('n+1')" class="w-full py-1 bg-brand-600 hover:bg-brand-500 text-white rounded text-[10px]">Select $(n+1)$</button>
+                        </div>
+                    </div>
+                    <div id="cases-fb"></div>
+                </div>
+            `;
+        }
+
+        function checkCaseMatch(term) {
+            const fb = document.getElementById('cases-fb');
+            fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs flex items-center space-x-2">
+                <i class="fa-solid fa-circle-check text-base"></i>
+                <span>Exhaustive Case Match Complete! If $n=3k+1$, then $n+2 = 3k+3 = 3(k+1)$ (divisible by 3). If $n=3k+2$, then $n+1 = 3k+3$ (divisible by 3). All cases covered! (+50 XP)</span>
+            </div>`;
+            awardXP(50, 'cases');
+            renderMath(fb);
+        }
+
+        // --- LAB 6: INDUCTION DOMINO LAB ---
+        function initInductionLab(container) {
+            currentState.labState.dominoesFallen = false;
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Mathematical Induction acts like an infinite domino chain reaction. Trigger the base case and observe the inductive step!</p>
+                    
+                    <div class="flex items-center justify-center space-x-4 py-6 bg-slate-950/60 rounded-xl border border-slate-800 overflow-hidden">
+                        ${[1, 2, 3, 4, 5, 6].map(i => `
+                            <div id="domino-${i}" class="domino w-8 h-20 bg-brand-600 border border-brand-400 rounded flex flex-col items-center justify-between py-2 text-white font-mono text-xs shadow-lg">
+                                <span>P(${i})</span>
+                                <i class="fa-solid fa-circle text-[6px]"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="flex justify-center space-x-3">
+                        <button onclick="triggerDominoes()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-emerald-600/20 flex items-center space-x-2">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Push Base Case $P(1)$</span>
+                        </button>
+                    </div>
+                    <div id="domino-fb"></div>
+                </div>
+            `;
+        }
+
+        function triggerDominoes() {
+            let delay = 0;
+            for (let i = 1; i <= 6; i++) {
+                setTimeout(() => {
+                    const dom = document.getElementById(`domino-${i}`);
+                    if (dom) {
+                        dom.classList.add('fallen', 'bg-emerald-600', 'border-emerald-400');
+                    }
+                }, delay);
+                delay += 300;
+            }
+
+            setTimeout(() => {
+                const fb = document.getElementById('domino-fb');
+                fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                    <span>Chain Reaction Complete! $P(1)$ knocked down $P(2)$, which knocked down $P(3)$, proving $P(n)$ for ALL $n \\in \\mathbb{N}$! (+50 XP)</span>
+                </div>`;
+                awardXP(50, 'induction');
+                renderMath(fb);
+            }, delay);
+        }
+
+        // --- LAB 7: STRONG INDUCTION BRIDGE ---
+        function initStrongInductionLab(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Postage Stamp Problem: Show any postage of $n \\ge 12$ cents can be formed using 4-cent and 5-cent stamps.</p>
+                    <div class="p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs space-y-2">
+                        <span class="font-semibold text-brand-300 block">Base Cases Required (12, 13, 14, 15 cents):</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-[11px]">
+                            <div class="bg-slate-900 p-1.5 rounded border border-slate-700">12¢ = 3×4¢</div>
+                            <div class="bg-slate-900 p-1.5 rounded border border-slate-700">13¢ = 2×4¢ + 1×5¢</div>
+                            <div class="bg-slate-900 p-1.5 rounded border border-slate-700">14¢ = 1×4¢ + 2×5¢</div>
+                            <div class="bg-slate-900 p-1.5 rounded border border-slate-700">15¢ = 3×5¢</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-300">Inductive Step: To form $k+1 = 16$ cents, which prior base case do we add a 4-cent stamp to?</p>
+                    <div class="flex space-x-2">
+                        <button onclick="verifyStrongStep(12)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-200">12¢</button>
+                        <button onclick="verifyStrongStep(13)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-200">13¢</button>
+                        <button onclick="verifyStrongStep(15)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-200">15¢</button>
+                    </div>
+                    <div id="strong-fb"></div>
+                </div>
+            `;
+        }
+
+        function verifyStrongStep(cents) {
+            const fb = document.getElementById('strong-fb');
+            if (cents === 12) {
+                fb.innerHTML = `<div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                    <span>Correct! $16\\text{¢} = (16-4)\\text{¢} + 4\\text{¢} = 12\\text{¢} + 4\\text{¢}$. Because Strong Induction assumes true for all $12 \\le i \\le k$, $P(12)$ is guaranteed valid! (+50 XP)</span>
+                </div>`;
+                awardXP(50, 'strong_induction');
+            } else {
+                fb.innerHTML = `<div class="p-3 bg-rose-950/40 border border-rose-500/40 text-rose-300 rounded-lg text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-xmark text-base"></i>
+                    <span>To reach $16\\text{¢}$ using a 4-cent stamp, subtract 4 from 16 to find the required prior base case!</span>
+                </div>`;
+            }
+            renderMath(fb);
+        }
+
+        // --- PRACTICE & QUIZ ENGINE ---
+        function startQuiz() {
+            currentState.quizCurrentIndex = 0;
+            currentState.quizScore = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const container = document.getElementById('quiz-container');
+            const q = QUIZ_QUESTIONS[currentState.quizCurrentIndex];
+            document.getElementById('quiz-score-display').innerText = `${currentState.quizScore} / ${QUIZ_QUESTIONS.length}`;
+
+            if (!q) {
+                container.innerHTML = `
+                    <div class="text-center py-8 space-y-4">
+                        <div class="inline-block p-4 bg-brand-500/20 text-brand-400 rounded-full text-3xl">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white">Quiz Completed!</h2>
+                        <p class="text-slate-300 text-sm">You scored ${currentState.quizScore} out of ${QUIZ_QUESTIONS.length}</p>
+                        <button onclick="startQuiz()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-sm font-medium transition">Retake Quiz</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                        <span>Question ${currentState.quizCurrentIndex + 1} of ${QUIZ_QUESTIONS.length}</span>
+                        <span class="font-mono text-brand-400">Discrete Math Quiz</span>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-white">${q.question}</h3>
+                    <div class="space-y-2 mt-4">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="submitQuizAnswer(${idx})" class="w-full text-left p-3.5 bg-slate-900/80 hover:bg-slate-700/80 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-slate-200 transition">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="quiz-explanation" class="mt-4"></div>
+                </div>
+            `;
+            renderMath(container);
+        }
+
+        function submitQuizAnswer(selectedIdx) {
+            const q = QUIZ_QUESTIONS[currentState.quizCurrentIndex];
+            const expDiv = document.getElementById('quiz-explanation');
+
+            if (selectedIdx === q.answer) {
+                currentState.quizScore++;
+                expDiv.innerHTML = `
+                    <div class="p-3 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs space-y-1">
+                        <div class="font-bold flex items-center space-x-1"><i class="fa-solid fa-check"></i><span>Correct!</span></div>
+                        <div>${q.explanation}</div>
+                    </div>
+                    <button onclick="nextQuizQuestion()" class="mt-3 px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-medium">Next Question</button>
+                `;
+            } else {
+                expDiv.innerHTML = `
+                    <div class="p-3 bg-rose-950/40 border border-rose-500/40 text-rose-300 rounded-lg text-xs space-y-1">
+                        <div class="font-bold flex items-center space-x-1"><i class="fa-solid fa-xmark"></i><span>Incorrect</span></div>
+                        <div>${q.explanation}</div>
+                    </div>
+                    <button onclick="nextQuizQuestion()" class="mt-3 px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-medium">Next Question</button>
+                `;
+            }
+            renderMath(expDiv);
+        }
+
+        function nextQuizQuestion() {
+            currentState.quizCurrentIndex++;
+            renderQuizQuestion();
+        }
+    </script>
+</body>
+</html>
